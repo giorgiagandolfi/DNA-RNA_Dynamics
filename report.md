@@ -94,7 +94,5 @@ Then it is possible to plot the results.
 
 `plotQC(qc)`
 
-![GitHub Logo](/images/logo.png)
-
-
+![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_controls/master/Equalizer.jpg)
 
