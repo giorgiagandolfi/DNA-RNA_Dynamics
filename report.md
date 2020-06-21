@@ -94,5 +94,6 @@ Then it is possible to plot the results.
 
 `plotQC(qc)`
 
-![header image](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/qcplot.png)
+![QCplot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/qcplot.png)
 
+As it can be seen, all eight samples have a good quality, since they are plotted on the right side of the line.  
