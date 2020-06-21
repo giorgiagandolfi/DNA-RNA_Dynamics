@@ -98,7 +98,8 @@ Negative controls are sample-dependent controls that by hybridizing with the sam
 
 `controlStripPlot(RGset, controls="NEGATIVE")`
 
-mettere immagine
+![control negative](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/controls_neg.png)
+
 As it can be seen from the plot, all negative controls for both red and green flourescence are good, since their values are below l000 (log2(1000) = 10). 
 ### Step 5.3: Calculate detection pValues and count how many probes have a dection pValue higher than 0.05.
 Let's calculate the detection pValue with the function detectionP that identifies failed positions defined as both the methylated and unmethylated channel reporting background singals. 
@@ -152,7 +153,8 @@ d_mean_of_M_dsset <- density(mean_of_M_dsset)
 ```
 
 The denisty distributions of beta and M values are almost overlapping in the two groups, as we can see from the plots below. 
-mettere plots
+
+![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_m_ds_vs_wt.png)
 
 ### Step 7: Normalize the data using the function preprocessSWAN to each student and compare raw data and normalized data.
 Normalization procedure aims to resolving the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using preprocessSWAN function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry types probe as well. 
@@ -197,12 +199,40 @@ sd_of_beta_preprocessSWAN_II <- apply(beta_preprocessSWAN_II,1,sd)
 d_sd_of_beta_preprocessSWAN_I <- density(sd_of_beta_preprocessSWAN_I,na.rm=T)
 d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 ```
-mettere plot+legenda
+![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/preprocessSWAN_plots.png)
 mettere commento
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
+Principal Component Analysis (PCA) is an exploratory tool to identidfy predominant gene expression pattern along the identified compoentents as weel as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using prcomp() function, that takes as argument the matrix of normalized beta values. Then a scree plot showing the cumulative variance explained by each principal component is generated.
 
+```
+pca_results <- prcomp(t(beta_preprocessSWAN), scale=T)
+plot(pca_results, col="pink",main="Scree plot")
+```
 
+![scree plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/Scree%20plot.png)
 
+It is possible to see how samples clusterize according to different varibles and to better vosualize the results colouring the dots according to a particular phenotype, i.e. the group (either WT or DS). 
+
+![pca plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/pca_group.png)
+
+### Step 9: Using the matrix of normalized beta values generated in step 7, identify differentially methylated probes between group DS and group WT using the Mann-Whitney test. 
+Let's identify deifferentialy methylated probes between group DS and group WT using a non-parametric test called Mann-Witheny or Wilcoxon rank-sum test. It is the equivalent of the most-known Student's t-test for unpaired data when no assumptions regarding normal distribution of data is made. We will use wilcox.test function for each row of the dataframe of preprocessSWAN beta values; thus an *ad hoc* function is created and applied to preprocessSWAN beta values.
+
+```
+My_mannwhitney_function <- function(x) {
+  wilcox <- wilcox.test(x~ pheno$Group)
+  return(wilcox$p.value)
+} 
+pValues_wilcox <- apply(beta_preprocessSWAN,1, My_mannwhitney_function)
+```
+
+We can calculate how many probes are differntialy methylated filtering the resulting pValues according to a threshold of 0.05. 
+
+```
+final_wilcox<-data.frame(beta_preprocessSWAN,pValues_wilcox)
+finaL_wilcox_0.05<-final_wilcox[final_wilcox$pValues_wilcox<=0.05,]
+dim(finaL_wilcox_0.05)
+```
 
 
 
