@@ -94,6 +94,7 @@ Then it is possible to plot the results.
 
 `plotQC(qc)`
 
+![GitHub Logo](/images/logo.png)
 
 
 
