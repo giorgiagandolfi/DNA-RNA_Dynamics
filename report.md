@@ -232,7 +232,65 @@ We can calculate how many probes are differntialy methylated filtering the resul
 final_wilcox<-data.frame(beta_preprocessSWAN,pValues_wilcox)
 finaL_wilcox_0.05<-final_wilcox[final_wilcox$pValues_wilcox<=0.05,]
 dim(finaL_wilcox_0.05)
+[1] 22351     9
 ```
+22351 CpG probes are differentially methylated according to the Mann-Whitney test.
+
+### Step 10: Apply multiple test correction and set a significant threshold of 0.05. How many probes do you identify as differentially methylated considering nominal pValues? How many after Bonferroni correction? How many after BH correction?
+When the number of probes is in the order of thousands, a correction of the signficance threshold is required: it is called multiple test correction. As we can see, by applying a threshold of 0.05 to the raw pValues of Mann-Whtiney test, a high number of false positives have been detected. In this step we are going to apply multiple test correction, such as Bonferroni correction and Benjamini-Hochberg correction, and to compare the results with the raw test.
+
+```
+#create a vector storing the raw pValues
+raw_pValues<-final_wilcox[,9]
+
+#apply BH and Bonferroni corrections
+corrected_pValues_BH <- p.adjust(raw_pValues,"BH")
+corrected_pValues_Bonf <- p.adjust(raw_pValues,"bonferroni")
+
+#create a dataframe storing raw and corrected pValues for each probe
+final_wilcox_corrected<-data.frame(final_wilcox, corrected_pValues_BH, corrected_pValues_Bonf)
+```
+Let's now see how many probes are differentially methylated after Bonferroni end BH correction.
+
+```
+dim(final_wilcox[final_wilcox$corrected_pValues_Bonf<=0.05,])
+[1] 0 9
+dim(final_wilcox[final_wilcox$corrected_pValues_BH<=0.05,])
+[1] 0 9
+```
+
+None false postives are detected when multiple test correction is applied. A boxplot of the raw and corrected pValues shows their distributions.
+
+![boxplot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/boxplot%20pink.png)
+
+### Step 11: Produce an heatmap of the top 100 differentially mehtylated probes.
+Heatpmap is a data visualization technique showing the level of differentially expressed genes in a matrix with different colours. Heatmaps are always coupled with hierarchical clustering, whose aim is to link genes or samples with similar profiles to form
+a dendrogram. Different linkage methods can be used to calculate the distance among clusters: (1) single linkage: (2) complete linkage and (3) average linkage. They are all implemented in heatmap.2 function. Let's first generate the input for the heatmaps and the color bar according to the phenotype group.
+
+```
+install.packages("gplots")
+library(gplots)
+input_heatmap=as.matrix(final_wilcox_corrected[1:100,1:8])
+pheno$Group
+colorbar<-c("red", "red", "blue","blue","blue","red", "red", "blue")
+
+#complete linkage (default)
+heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,dendrogram="both",key=T,ColSideColors=colorbar,density.info="none",trace="none",scale="none",symm=F)
+#single linkage
+heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x) hclust(x,method = 'single'),dendrogram="both",key=T,ColSideColors=colorbar,density.info="none",trace="none",scale="none",symm=F)
+#average linkage
+heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x) hclust(x,method = 'average'),dendrogram="both",key=T,ColSideColors=colorbar,density.info="none",trace="none",scale="none",symm=F)
+```
+#### Complete linkage
+![complete linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/complete_link.png)
+
+#### Single linkage
+![single linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/single_link.png)
+
+#### Average linkage
+![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link.png)
+
+
 
 
 
