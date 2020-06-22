@@ -290,6 +290,8 @@ heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x)
 #### Average linkage
 ![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link.png)
 
+### Step 12: Produce a volcano plot and a Manhattan plot of the results of differential methylation analysis.
+
 
 
 
