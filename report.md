@@ -245,7 +245,7 @@ plot(pca_results, col="pink",main="Scree plot")
 
 It is possible to visualize the results in the plot by colouring the dots according to a particular phenotype, i.e. the group (either WT or DS). 
 
-```
+
 
 ![pca plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/pca_group.png)
 
