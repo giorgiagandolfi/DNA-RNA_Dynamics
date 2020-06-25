@@ -243,14 +243,20 @@ plot(pca_results, col="pink",main="Scree plot")
 
 ![scree plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/Scree%20plot.png)
 
-It is possible to visualize the results in the plot by colouring the dots according to a particular phenotype, i.e. the group (either WT or DS). 
+It is possible to visualize the results in the plot by colouring the dots according to a particular phenotype, i.e. the group (either WT or DS). As it can be observed, WT and DS groups are well-separated and a fitting line can be plotted to better evaluate the separation.
 
-
+```
+pheno <- read.csv("/Input_data/Samplesheet_report_2020.csv",header=T, stringsAsFactors=T)
+palette(c("red","green"))
+plot(pca_results$x[,1], pca_results$x[,2],cex=2.5,pch=17,col=pheno$Group,xlab="PC1",ylab="PC2",xlim=c(-1000,1000),ylim=c(-1000,1000))
+text(pca_results$x[,1], pca_results$x[,2],labels=pheno$Array,cex=1.0,pos=3)
+legend("bottomright",legend=levels(pheno$Group),col=c(1:nlevels(pheno$Group)),pch=17)
+```
 
 ![pca plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/pca_group.png)
 
 ### Step 9: Using the matrix of normalized beta values generated in step 7, identify differentially methylated probes between group DS and group WT using the Mann-Whitney test. 
-Let's identify deifferentialy methylated probes between group DS and group WT using a non-parametric test called Mann-Witheny or Wilcoxon rank-sum test. It is the equivalent of the most-known Student's t-test for unpaired data when no assumptions regarding normal distribution of data is made. We will use wilcox.test function for each row of the dataframe of preprocessSWAN beta values; thus an *ad hoc* function is created and applied to preprocessSWAN beta values.
+Let's identify differentialy methylated probes between group DS and group WT using a non-parametric test called **Mann-Witheny** or **Wilcoxon rank-sum test**. It is the equivalent of the most-known Student's t-test for unpaired data when no assumptions regarding normal distribution of data are made. We will use **wilcox.test** function for each row of the dataframe of preprocessSWAN beta values; thus an *ad hoc* function is created and applied to preprocessSWAN beta values.
 
 ```
 My_mannwhitney_function <- function(x) {
@@ -272,7 +278,7 @@ dim(finaL_wilcox_0.05)
 22351 CpG probes are differentially methylated according to the Mann-Whitney test.
 
 ### Step 10: Apply multiple test correction and set a significant threshold of 0.05. How many probes do you identify as differentially methylated considering nominal pValues? How many after Bonferroni correction? How many after BH correction?
-When the number of probes is in the order of thousands, a correction of the signficance threshold is required: it is called multiple test correction. As we can see, by applying a threshold of 0.05 to the raw pValues of Mann-Whtiney test, a high number of false positives have been detected. In this step we are going to apply multiple test correction, such as Bonferroni correction and Benjamini-Hochberg correction, and to compare the results with the raw test.
+When the number of probes is in the order of thousands, a correction of the signficance threshold is required: it is called **multiple test correction**. As we can see, by applying a threshold of 0.05 to the raw pValues of Mann-Whitney test, a high number of false positives has been detected. In this step we are going to apply multiple test correction, such as **Bonferroni correction** and **Benjamini-Hochberg correction**, and to compare the results with the ones from the raw test. Both multiple test corrections have been performed using **p.adjust** function.
 
 ```
 #create a vector storing the raw pValues
@@ -299,8 +305,7 @@ None false postives are detected when multiple test correction is applied. A box
 ![boxplot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/boxplot%20pink.png)
 
 ### Step 11: Produce an heatmap of the top 100 differentially mehtylated probes.
-Heatpmap is a data visualization technique showing the level of differentially expressed genes in a matrix with different colours. Heatmaps are always coupled with hierarchical clustering, whose aim is to link genes or samples with similar profiles to form
-a dendrogram. Different linkage methods can be used to calculate the distance among clusters: (1) single linkage: (2) complete linkage and (3) average linkage. They are all implemented in heatmap.2 function. Let's first generate the input for the heatmaps and the color bar according to the phenotype group.
+**Heatpmap** is a data visualization technique showing the level of differentially expressed genes in a matrix with different colours. Heatmaps are always coupled with **hierarchical clustering**, whose aim is to link genes or samples with similar profiles to generate a dendrogram. Different linkage methods can be used to calculate the distance among clusters: (1) **single linkage**, (2) **complete linkage** and (3) **average linkage**. They are all implemented in **heatmap.2** function. Let's first generate the input for the heatmaps and the color bar according to the phenotype group.
 
 ```
 install.packages("gplots")
@@ -320,15 +325,15 @@ heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x)
 ![complete linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/complete_link_ord.png)
 
 #### Single linkage
-![single linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/single_link.png)
+![single linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/single_link_or.png)
 
 #### Average linkage
-![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link.png)
+![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link_ord.png)
 
-A dendrogram generated using complete linkage method is charatcterized by compact and well-defined clusters both for the probes and for the samples,on the right side and on the upper side of the heatmap, respectively. While the dendrograms generated with single linkage method show the chaining effect, as we can see expecially for the one of the probes. However, all heatmaps show a clear division between WT samples (blue) and DS samples (red), as well as a distiction between hypermethylated (highly expressed genes) and ipomethylated (poorly expressed genes) CpG islands. 
+Dendrogram generated using complete linkage method is charatcterized by compact and well-defined clusters both for the probes and for the samples. While dendrograms generated with single linkage method show the chaining effect, expecially in the probes' one. However, all heatmaps exhibit a clear division between WT samples (blue) and DS samples (red), as well as a distiction between hypermethylated (high expression level) and ipomethylated (low expression level) CpG islands. 
 
 ### Step 12: Produce a volcano plot and a Manhattan plot of the results of differential methylation analysis.
-A volcano plot is a type of scatterplot that displays the statistical significance against the fold change. Since in this case, the pValues have been generated using a non-parametric test, the typical volcano shape of the plot is missed. The fold change is calculated as the difference between the average beta values of WT samples and the average beta values of DS samples, in the following way.
+A **volcano plot** is a type of scatterplot that displays the statistical significance against the fold change; it can be coupled with Gene Ontology enrichment. The fold change is calculated as the difference between the average beta values of WT samples and the average beta values of DS samples, in the following way.
 
 ```
 beta_group <- final_wilcox_corrected[,1:8]
@@ -339,7 +344,7 @@ mean_beta_groupWT <- apply(beta_groupWT,1,mean)
 delta <- mean_beta_groupWT - mean_beta_groupDS
 ```
 
-A data frame is created storing in one column, the delta values, and on the other, the -log10 of pValues; these values are then plotted using the plot function with some options.
+A data frame is created storing in one column, the delta values, and on the other, the -log10 of pValues; these values are then plotted using **plot** function with some options.
 
 ```
 toVolcPlot <- data.frame(delta, -log10(final_wilcox_corrected$pValues_wilcox))
@@ -348,8 +353,10 @@ plot(toVolcPlot[,1], toVolcPlot[,2],pch=16,cex=0.5)
 
 ![volcano plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/volcano_plot.png)
 
-Together with the volcano plot, the so-called Manhattan plot can be generated using the **gap** package. A Manhattan plot is a type of scatter plot useful for the visualization of large number of data, that are plotted according to the genomic coordinates (X-axis) and the negative log10 of the pValues. For the same reason of volcano plot, the typical profile of skyscrapers charterizing the Manhattan plots is lost. 
-After downloading the required package, the dataframe of CpG probes with associted pValues has to be annotated by extracting genomic information from the Illumina450Manifest (cleaned version). The merge function is used to perform this step. However, since the CpG probes are stored in the rownames and not in the columns (as required by merge() funtion), a new dataframe storing the CpG probe IDs on the column is created.
+Since in this case the pValues have been generated using a non-parametric test, the typical "volcano" shape of the plot is less detectable than in a volcano plot generated using pValues from parametric tests. 
+
+Together with the volcano plot, a **Manhattan plot** can be generated using the **gap** package. A Manhattan plot is a type of scatter plot useful for the visualization of large number of data, that are plotted according to the genomic coordinates (X-axis) and the negative log10 of the pValues (Y-axis). For the same reason of volcano plot, the typical profile of skyscrapers charterizing the Manhattan plots is lost. 
+After downloading the required package, the dataframe of CpG probes with associted pValues has to be annotated by extracting genomic information from the Illumina450Manifest (cleaned version). The **merge** function is used to perform this step. However, since CpG probes are stored in the rownames and not in the columns (as required by merge() funtion), a new dataframe storing the CpG probe IDs on the column is generated.
 
 ```
 final_wilcox_corrected_col <- data.frame(rownames(final_wilcox_corrected), final_wilcox_corrected)
@@ -360,7 +367,7 @@ dim(final_wilcox_corrected_col_annotated)
 [1] 485512     44
 ```
 
-Then the Manhattan plot is generated using **mhtplot** function.
+Then the Manhattan plot is created using **mhtplot** function.
 
 ```
 input_Manhattan <- data.frame(final_wilcox_corrected_col_annotated$CHR, final_wilcox_corrected_col_annotated$MAPINFO, final_wilcox_corrected_col_annotated$pValues_wilcox)
@@ -377,7 +384,49 @@ palette
 mhtplot(input_Manhattan, control=mht.control(colors=palette))
 axis(2,cex=0.5)
 ```
+### Optional: As DS is caused by the trisomy of chromosome 21, try also to plot the density of the methylation values of the probes mapping on chromosome 21. Do you see a very clear difference between the samples? How many differentially methylated probes do you find on chromosome 21?
 
+```
+chr21 <- Illumina450Manifest_clean[Illumina450Manifest_clean$CHR==21,]
+chr21<-droplevels(chr21)
+
+#beta_wtset and beta_dsset have been already calculated in step 6
+beta_wtset_21 <- beta_wtset[rownames(beta_wtset) %in% chr21$IlmnID,]
+beta_dsset_21 <- beta_dsset[rownames(beta_dsset) %in% chr21$IlmnID,]
+M_wtset_21 <- M_wtset[rownames(M_wtset) %in% chr21$IlmnID,]
+M_dsset_21 <- M_dsset[rownames(M_dsset) %in% chr21$IlmnID,]
+mean_of_beta_wtset_21 <- apply(beta_wtset_21,1,mean,na.rm=T)
+mean_of_beta_dsset_21 <- apply(beta_dsset_21,1,mean,na.rm=T)
+
+d_mean_of_beta_wtset_21 <- density(mean_of_beta_wtset_21)
+d_mean_of_beta_dsset_21 <- density(mean_of_beta_dsset_21)
+
+mean_of_M_wtset_21 <- apply(M_wtset_21,1,mean,na.rm=T)
+mean_of_M_dsset_21 <- apply(M_dsset_21,1,mean,na.rm=T)
+d_mean_of_M_wtset_21 <- density(mean_of_M_wtset_21)
+d_mean_of_M_dsset_21 <- density(mean_of_M_dsset_21)
+```
+Then the plots are generated as overlapping plots.
+
+```
+par(mfrow=c(1,2))
+plot(d_mean_of_beta_wtset_21,main="Density of Beta Values",col="orange")
+lines(d_mean_of_beta_dsset_21,col="purple")
+plot(d_mean_of_M_wtset_21,main="Density of M Values",col="orange")
+lines(d_mean_of_M_dsset_21,col="purple")
+```
+![optional plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/optional_chr21.png)
+
+In order to find how many differentially methylated probes are in chromosome 21, from the vector storing all pValues lower than the significance threshold, the ones associated with CpG probes in chromosme 21 are extracted. 
+
+```
+all_chromosomes<-data.frame(Illumina450Manifest_clean$IlmnID,Illumina450Manifest_clean$CHR)
+only_chr21<-ID_CHR[ID_CHR$Illumina450Manifest_clean.CHR==21,]
+extract_pVal_chr21<-rownames(final_wilcox)%in%cpg21$Illumina450Manifest_clean.IlmnID
+finaL_wilcox_0.05_chr21<-final_wilcox[final_wilcox$pValues_wilcox<=0.05 & extract_pVal_chr21,]
+dim(finaL_wilcox_0.05_chr21)
+[1] 298   9
+```
 
 
 
