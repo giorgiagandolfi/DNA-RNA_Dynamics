@@ -553,11 +553,11 @@ In order to find how many differentially methylated probes are in chromosome 21,
 
 ```
 all_chromosomes<-data.frame(Illumina450Manifest_clean$IlmnID,Illumina450Manifest_clean$CHR)
-only_chr21<-ID_CHR[ID_CHR$Illumina450Manifest_clean.CHR==21,]
-extract_pVal_chr21<-rownames(final_wilcox)%in%cpg21$Illumina450Manifest_clean.IlmnID
+only_chr21<-all_chromosomes[all_chromosomes$Illumina450Manifest_clean.CHR==21,]
+extract_pVal_chr21<-rownames(final_wilcox)%in%only_chr21$Illumina450Manifest_clean.IlmnID
 finaL_wilcox_0.05_chr21<-final_wilcox[final_wilcox$pValues_wilcox<=0.05 & extract_pVal_chr21,]
 dim(finaL_wilcox_0.05_chr21)
-[1] 298   9
+[1] 299   9
 ```
 
 
