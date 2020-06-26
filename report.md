@@ -208,7 +208,7 @@ As it can be seen, all eight samples have a good quality, since they are plotted
 
 `controlStripPlot(RGset, controls="NEGATIVE")`
 
-![control negative](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/controls_neg.png)
+![control negative](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/step5.png)
 
 As it can be seen from the plot, all negative controls for both red and green flourescence are good, since their values are below l000 (log2(1000) = 10). 
 ### Step 5.3: Calculate detection pValues and count how many probes have a dection pValue higher than 0.05.
@@ -218,7 +218,18 @@ Let's calculate the detection pValue with **detectionP** function that identifie
 
 In order to evaluate how many probes have a pValue higher than the selected threshold (i.e. 0.05), detectionP results are filtered up.
 
-`failed <- detP>0.05`
+```
+failed <- detP>0.05
+summary(failed)
+5775278051_R01C01 5775278051_R04C02 5775278078_R02C01 5775278078_R05C01 5775278078_R05C02 5930514034_R01C02
+ Mode :logical     Mode :logical     Mode :logical     Mode :logical     Mode :logical     Mode :logical    
+ FALSE:485265      FALSE:485302      FALSE:485248      FALSE:485099      FALSE:485127      FALSE:485421     
+ TRUE :247         TRUE :210         TRUE :264         TRUE :413         TRUE :385         TRUE :91         
+ 5930514035_R04C02 5930514035_R06C02
+ Mode :logical     Mode :logical    
+ FALSE:485466      FALSE:485397     
+ TRUE :46          TRUE :115    
+ ```
 
 In the summary, the boolean "TRUE" refers to the number of probes which have pValue higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according each samples.
 
@@ -240,8 +251,6 @@ failed
 3882325    1771 
 ```
 
-Only 1771 among 3884096 probes have no significant pValue (0.045% of the total number of probes).
-
 ### Step 6: Calculate raw beta and M values and plot the densities of mean methylation values, dividing the samples in DS and WT.
 Let's divide the samples in Wild Type (WT) and with Down Sydrome (DS), thus according to the field Group, first in the SampleSheet file then in the MSet.raw file.
 ```
@@ -251,7 +260,7 @@ wtset<-MSet.raw[,colnames(MSet.raw) %in% wt]
 dsset<-MSet.raw[,colnames(MSet.raw) %in% ds]
 ```
 
-Now raw M and beta values are extracted for both groups using getM and getBeta functions, respectively. 
+Now raw M and beta values are extracted for both groups using **getM** and **getBeta** functions, respectively. 
 
 Then, the means of each M and beta values of probes are calculated and plotted according to their density distributions.
 
@@ -334,6 +343,7 @@ d_sd_of_beta_preprocessSWAN_I <- density(sd_of_beta_preprocessSWAN_I,na.rm=T)
 d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 ```
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/preprocessSWAN_plots.png)
+
 It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standrd deviation and a up-shifted median of beta values in the boxplots.
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
 Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
