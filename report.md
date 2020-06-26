@@ -505,12 +505,15 @@ levels(input_Manhattan$final_wilcox_corrected_col_annotated.CHR)
 input_Manhattan$final_wilcox_corrected_col_annotated.CHR <- factor(input_Manhattan$final_wilcox_corrected_col_annotated.CHR,levels=c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y"))
 levels(input_Manhattan$final_wilcox_corrected_col_annotated.CHR)
 
-palette <-c("red","blue","green","cyan","yellow","gray","magenta","red","blue","green","cyan","yellow","gray","magenta","red","blue","green","cyan","yellow","gray","brown","red","blue","green")
+palette <-rainbow(24)
 palette
 
 mhtplot(input_Manhattan, control=mht.control(colors=palette))
 axis(2,cex=0.5)
 ```
+
+![manhattan plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/manhattan_plot.png)
+
 ### Optional: As DS is caused by the trisomy of chromosome 21, try also to plot the density of the methylation values of the probes mapping on chromosome 21. Do you see a very clear difference between the samples? How many differentially methylated probes do you find on chromosome 21?
 
 ```
