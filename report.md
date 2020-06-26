@@ -19,8 +19,43 @@ Let's now import the raw data from the folder /Input_Data. In pariticulary, we a
 SampleSheet <- read.table("Input_Data/Samplesheet_report_2020.csv",sep=",",header=T)
 baseDir <- ("Input_data")
 targets <- read.metharray.sheet(baseDir)
+targets
+
+Sample_Name Group Age      Slide  Array
+1        1020    DS  29 5775278051 R01C01
+2        1036    DS  34 5775278051 R04C02
+3        3038    WT  46 5775278078 R02C01
+4        3042    WT  32 5775278078 R05C01
+5        3052    WT  31 5775278078 R05C02
+6        1016    DS  43 5930514034 R01C02
+7        1029    DS  32 5930514035 R04C02
+8        3029    WT  35 5930514035 R06C02
+                      Basename
+1 Input_data/5775278051_R01C01
+2 Input_data/5775278051_R04C02
+3 Input_data/5775278078_R02C01
+4 Input_data/5775278078_R05C01
+5 Input_data/5775278078_R05C02
+6 Input_data/5930514034_R01C02
+7 Input_data/5930514035_R04C02
+8 Input_data/5930514035_R06C02
+
 RGset <- read.metharray.exp(targets = targets)
 save(RGset,file="RGset.RData")
+RGset
+str(RGset)
+
+class: RGChannelSet 
+dim: 622399 8 
+metadata(0):
+assays(2): Green Red
+rownames(622399): 10600313 10600322 ... 74810490 74810492
+rowData names(0):
+colnames(8): 5775278051_R01C01 5775278051_R04C02 ... 5930514035_R04C02 5930514035_R06C02
+colData names(7): Sample_Name Group ... Basename filenames
+Annotation
+  array: IlluminaHumanMethylation450k
+  annotation: ilmn12.hg19
 ```
 
 ### Step 2: Create the dataframes Red and Green to store the red and green fluorescences respectively.
@@ -65,16 +100,76 @@ Since the address is associated with a type II probe, no color is specified in t
 Then the assigned address is searched in the Illumina450Manifest both for AddressA_ID and AddressB_ID:
 ```
 Illumina450Manifest_clean[Illumina450Manifest_clean$AddressA_ID=="39802405",]
+       IlmnID       Name AddressA_ID
+32 cg01086462 cg01086462    39802405
+                                     AlleleA_ProbeSeq AddressB_ID
+32 AATAAACCATCCCTAATTAACCCTACCTACTTAATATACACCATACCTAC            
+   AlleleB_ProbeSeq Infinium_Design_Type Next_Base Color_Channel
+32                                    II                        
+                                                                                                               Forward_Sequence
+32 CGCCTGCTTTAAATAGACCATCCCTGATTGACCCTGCCTGCTTAATGTACACCATACCTG[CG]TTATCGCACCTCCTTTAAATACACAACACTTGATTGACCCTGCCTGCTTTATGTAGACAC
+   Genome_Build CHR MAPINFO
+32           37   Y 7429349
+                                            SourceSeq Chromosome_36
+32 CGCAGGTATGGTGTACATTAAGCAGGCAGGGTCAATCAGGGATGGTCTAT             Y
+   Coordinate_36 Strand Probe_SNPs Probe_SNPs_10 Random_Loci
+32       7489349      R                                   NA
+   Methyl27_Loci UCSC_RefGene_Name UCSC_RefGene_Accession
+32            NA                                         
+   UCSC_RefGene_Group UCSC_CpG_Islands_Name
+32                     chrY:7428179-7428424
+   Relation_to_UCSC_CpG_Island Phantom DMR Enhancer HMM_Island
+32                     S_Shore                   NA           
+   Regulatory_Feature_Name Regulatory_Feature_Group DHS
+32                                                   NA
+
 Illumina450Manifest_clean[Illumina450Manifest_clean$AddressB_ID=="39802405",]
+ [1] IlmnID                      Name                       
+ [3] AddressA_ID                 AlleleA_ProbeSeq           
+ [5] AddressB_ID                 AlleleB_ProbeSeq           
+ [7] Infinium_Design_Type        Next_Base                  
+ [9] Color_Channel               Forward_Sequence           
+[11] Genome_Build                CHR                        
+[13] MAPINFO                     SourceSeq                  
+[15] Chromosome_36               Coordinate_36              
+[17] Strand                      Probe_SNPs                 
+[19] Probe_SNPs_10               Random_Loci                
+[21] Methyl27_Loci               UCSC_RefGene_Name          
+[23] UCSC_RefGene_Accession      UCSC_RefGene_Group         
+[25] UCSC_CpG_Islands_Name       Relation_to_UCSC_CpG_Island
+[27] Phantom                     DMR                        
+[29] Enhancer                    HMM_Island                 
+[31] Regulatory_Feature_Name     Regulatory_Feature_Group   
+[33] DHS                        
+<0 rows> (or 0-length row.names)
+
 ```
 
-In paritcular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. 
+In paritcular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG).
 
 ### Step 4: Create the object MSet.raw 
 **MSet.raw** function allows to extract methylated and unmethylated signals from the raw data in RGChannelSet.
 ```
 MSet.raw <- preprocessRaw(RGset)
 MSet.raw
+
+class: MethylSet 
+dim: 485512 8 
+metadata(0):
+assays(2): Meth Unmeth
+rownames(485512): cg00050873 cg00212031 ... ch.22.47579720R
+  ch.22.48274842R
+rowData names(0):
+colnames(8): 5775278051_R01C01 5775278051_R04C02 ...
+  5930514035_R04C02 5930514035_R06C02
+colData names(7): Sample_Name Group ... Basename filenames
+Annotation
+  array: IlluminaHumanMethylation450k
+  annotation: ilmn12.hg19
+Preprocessing
+  Method: Raw (no normalization or bg correction)
+  minfi version: 1.34.0
+  Manifest version: 0.4.0
 ```
 
 It is possible to sae MSet.raw object as RData file:
@@ -82,7 +177,7 @@ It is possible to sae MSet.raw object as RData file:
 `save(MSet.raw,file="MSet_raw.RData")`
 
 ### Step 5.1: Perform the quality check with QCplot.
-The quality control is first perfomed with **getQC** function, that estimates sample-specific quality checks for methylation data 
+The quality control is first perfomed with **getQC** function, that estimates sample-specific quality checks for methylation data. 
 The result of getQC function is a dataframe with two columns referring to the chipwide medians of the mthylated and unmethilated channels.
 
 ```
@@ -137,6 +232,13 @@ X5775278078_R05C02 | 385 |
 X5930514034_R01C02 | 91 |
 X5930514035_R04C02 | 46 |
 X5930514035_R06C02 | 115 |
+
+```
+table(failed)
+failed
+  FALSE    TRUE 
+3882325    1771 
+```
 
 Only 1771 among 3884096 probes have no significant pValue (0.045% of the total number of probes).
 
@@ -232,13 +334,38 @@ d_sd_of_beta_preprocessSWAN_I <- density(sd_of_beta_preprocessSWAN_I,na.rm=T)
 d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 ```
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/preprocessSWAN_plots.png)
-It is possible to observe that normalized beta and M values are not so different from those obtained from the raw data, despite an higher peak in 
+It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standrd deviation and a up-shifted median of beta values in the boxplots.
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
 Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
 
 ```
 pca_results <- prcomp(t(beta_preprocessSWAN), scale=T)
+print(summary(pca_results))
+Importance of components:
+                            PC1      PC2      PC3       PC4       PC5       PC6       PC7       PC8
+Standard deviation     461.1061 269.7775 233.1360 203.65763 189.44997 185.91455 183.92640 4.542e-12
+Proportion of Variance   0.4379   0.1499   0.1119   0.08543   0.07392   0.07119   0.06968 0.000e+00
+Cumulative Proportion    0.4379   0.5878   0.6998   0.78521   0.85913   0.93032   1.00000 1.000e+00
 plot(pca_results, col="pink",main="Scree plot")
+pca_results$x
+                         PC1        PC2        PC3        PC4        PC5         PC6         PC7
+5775278051_R01C01 -490.39517  273.66838  -46.53628   11.80547 -132.53730    9.079777 -340.629412
+5775278051_R04C02 -580.39316  320.07385  103.43103   29.52610  120.37819   42.834122  288.382072
+5775278078_R02C01  -55.67497 -195.75628  -13.04294 -164.58776 -376.02822  -92.090704  158.506414
+5775278078_R05C01 -213.07150 -284.22106  -35.89420   39.24178  211.49176 -343.417885  -52.793862
+5775278078_R05C02 -197.45533 -391.14454 -148.14290  124.19658   58.87745  320.053770  -11.075602
+5930514034_R01C02  589.54629  228.41669 -418.95788 -114.00845   81.24534   -2.236843   39.704411
+5930514035_R04C02  590.14977   82.13768  200.98379  375.69546  -87.35420  -34.241623    7.064962
+5930514035_R06C02  357.29407  -33.17472  358.15937 -301.86919  123.92698  100.019385  -89.158983
+                            PC8
+5775278051_R01C01  5.818104e-12
+5775278051_R04C02  1.962048e-12
+5775278078_R02C01  1.660567e-12
+5775278078_R05C01  1.868676e-12
+5775278078_R05C02 -1.768683e-11
+5930514034_R01C02  6.477131e-12
+5930514035_R04C02  5.833994e-12
+5930514035_R06C02 -3.655050e-12
 ```
 
 ![scree plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/Scree%20plot.png)
@@ -416,6 +543,8 @@ plot(d_mean_of_M_wtset_21,main="Density of M Values",col="orange")
 lines(d_mean_of_M_dsset_21,col="purple")
 ```
 ![optional plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/optional_chr21.png)
+
+No great differences in the distribution of beta and M values between the two groups can be appreciated.
 
 In order to find how many differentially methylated probes are in chromosome 21, from the vector storing all pValues lower than the significance threshold, the ones associated with CpG probes in chromosme 21 are extracted. 
 
