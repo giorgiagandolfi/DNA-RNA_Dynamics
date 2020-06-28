@@ -1,4 +1,4 @@
-# Report DNA/RNA Dynamics
+# Report DNA/RNA Dynamics Gandolfi Giorgia
 ## Analysis of a DNA methylation dataset performed with R software and R Packages. 
 ### Step 1: Load raw data with minfi and create an object called RGset storing the RGChannelSet object.
 First of all, it is important to remove all the variables from R workspace and set the working directory containing the raw data of DNA methylation dataset. 
