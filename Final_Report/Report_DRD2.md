@@ -13,7 +13,7 @@ Then let's load **minfi** package, previously installed from Bioconductor. Minfi
 
 `suppressMessages(library(minfi))`
 
-Let's now import the raw data from the folder /Input_Data. In particulary, we can load this file using **read.metharray.sheet** function and then assign it to a object of class RGChannelSet using **read.metharray.exp** function.
+Let's now import the raw data from the folder /Input_Data. We can load this file using **read.metharray.sheet** function and then assign it to a object of class RGChannelSet using **read.metharray.exp** function.
 
 ```
 SampleSheet <- read.table("Input_Data/Samplesheet_report_2020.csv",sep=",",header=T)
@@ -76,7 +76,7 @@ dim(Green)
 ```
 
 ### Step 3: Find Red and Green fluorescence associated to the address 39802405. 
-In order to find red and green fluorescences for the specfic address the following command is performed in Red and Green dataframes respectively:
+In order to find red and green fluorescences for the specific address the following command is performed in Red and Green dataframes respectively:
 ```
 Red[rownames(Red)=="39802405",]
 
@@ -147,7 +147,7 @@ Illumina450Manifest_clean[Illumina450Manifest_clean$AddressB_ID=="39802405",]
 
 ```
 
-In particular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG). The results are summarized in the table below as requested.
+In particular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associated to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG). The results are summarized in the table below as requested.
 
 Sample | Red flourescence | Green flourescence | Type | Color
 ------------ | ------------- | ------------ | ------------- | -------------
@@ -191,7 +191,7 @@ It is possible to save MSet.raw object as RData file:
 `save(MSet.raw,file="MSet_raw.RData")`
 
 ### Step 5.1: Perform the quality check with QCplot.
-The quality control is first perfomed with **getQC** function, that estimates sample-specific quality checks for methylation data. 
+The quality control is first performed with **getQC** function, that estimates sample-specific quality checks for methylation data. 
 The result of getQC function is a dataframe with two columns referring to the chipwide medians of the methylated and unmethylated channels.
 
 ```
@@ -218,7 +218,7 @@ Then it is possible to plot the results with **plotQC** function.
 
 As it can be seen, all eight samples have a good quality, since they exhibit high median methylated and unmethylated signals.  
 ### Step 5.2: Check the intensity of negative controls using minfi.
-**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evalute the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the signal intensities of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
+**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evaluate the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the signal intensities of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
 
 `controlStripPlot(RGset, controls="NEGATIVE")`
 
@@ -245,7 +245,7 @@ summary(failed)
  TRUE :46          TRUE :115    
  ```
 
-In the summary, the boolean "TRUE" refers to the number of probes whose pValue is higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according to each sample.
+In the summary, the boolean "TRUE" refers to the number of probes whose pValue is higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summarizes the results according to each sample.
 
 Sample | Failed positions |
 ------------ | ------------- |
@@ -266,7 +266,7 @@ failed
 ```
 
 ### Step 6: Calculate raw beta and M values and plot the densities of mean methylation values, dividing the samples in DS and WT.
-Let's divide the samples in Wild Type (WT) and with Down Sydrome (DS), thus according to the field Group, first in the SampleSheet file then in the MSet.raw file.
+Let's divide the samples in Wild Type (WT) and with Down Syndrome (DS), thus according to the field Group, first in the SampleSheet file then in the MSet.raw file.
 ```
 wt <- SampleSheet[SampleSheet$Group=="WT", "Basename"]
 ds <- SampleSheet[SampleSheet$Group=="DS", "Basename"]
@@ -315,7 +315,7 @@ plot(d_mean_of_M_wtset,main="Density of M Values",col="purple")
 lines(d_mean_of_M_dsset, col="green")
 ```
 
-The denisty distributions of beta and M values are almost overlapping in the two groups (orange lines refer to WT while green lines to DS). As it can be seen, the range of beta values is between 0 and 1 (bimodal distirbution) while the range of M values is between minus infinite and plus infinite, so any real number.
+The density distributions of beta and M values are almost overlapping in the two groups (orange lines refer to WT while green lines to DS). As it can be seen, the range of beta values is between 0 and 1 (bimodal distribution) while the range of M values is between minus infinite and plus infinite, so any real number.
 
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_m_ds_vs_wt.png)
 ![overlapping plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta%20values%20and%20m%20values%20green%20and%20orange.png)
@@ -368,7 +368,7 @@ d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 Blue lines refer to Infinium I probes while red lines refer to Infinium II probes. 
 It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standard deviation, as expected. The higher peak in the standard deviation of type II beta values is due to less accuracy and reproducibility of Infinium II probes. Furthermore, the distribution of beta values in normalized data is almost similar in all samples, while it is more variable for raw beta values. 
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
-Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the greatest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
+Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified components as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the greatest variances in the data. In R environment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
 
 ```
 pca_results <- prcomp(t(beta_preprocessSWAN), scale=T)
@@ -415,7 +415,7 @@ legend("bottomright",legend=levels(pheno$Group),col=c(1:nlevels(pheno$Group)),pc
 ![pca plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/pca_group.png)
 
 ### Step 9: Using the matrix of normalized beta values generated in step 7, identify differentially methylated probes between group DS and group WT using the Mann-Whitney test. 
-Let's identify differentialy methylated probes between group DS and group WT using a non-parametric test called **Mann-Witheny** or **Wilcoxon rank-sum test**. It is the equivalent of the most-known Student's t-test for unpaired data when no assumptions regarding normal distribution of data are made. We will use **wilcox.test** function for each row of the dataframe of preprocessSWAN beta values; thus an *ad hoc* function is created and applied to preprocessSWAN beta values.
+Let's identify differentially methylated probes between group DS and group WT using a non-parametric test called **Mann-Witheny** or **Wilcoxon rank-sum test**. It is the equivalent of the most-known Student's t-test for unpaired data when no assumptions regarding normal distribution of data are made. We will use **wilcox.test** function for each row of the dataframe of preprocessSWAN beta values; thus an *ad hoc* function is created and applied to preprocessSWAN beta values.
 
 ```
 My_mannwhitney_function <- function(x) {
@@ -425,7 +425,7 @@ My_mannwhitney_function <- function(x) {
 pValues_wilcox <- apply(beta_preprocessSWAN,1, My_mannwhitney_function)
 ```
 
-We can calculate how many probes are differntially methylated filtering the resulting pValues according to a threshold of 0.05. Then, it is possible to sort the pValues in ascending order.
+We can calculate how many probes are differentially methylated filtering the resulting pValues according to a threshold of 0.05. Then, it is possible to sort the pValues in ascending order.
 
 ```
 final_wilcox<-data.frame(beta_preprocessSWAN,pValues_wilcox)
@@ -437,7 +437,7 @@ dim(final_wilcox_0.05)
 22351 CpG probes are differentially methylated according to the Mann-Whitney test.
 
 ### Step 10: Apply multiple test correction and set a significant threshold of 0.05. How many probes do you identify as differentially methylated considering nominal pValues? How many after Bonferroni correction? How many after BH correction?
-When the number of probes is in the order of thousands, a correction of the signficance threshold is required: it is called **multiple test correction**. As we can see, by applying a threshold of 0.05 to the raw pValues of Mann-Whitney test, a high number of false positives has been detected. In this step we are going to apply multiple test correction, such as **Bonferroni correction** and **Benjamini-Hochberg correction**, and to compare the results with the ones from the raw test. Both multiple test corrections have been performed using **p.adjust** function.
+When the number of probes is in the order of thousands, a correction of the significance threshold is required: it is called **multiple test correction**. As we can see, by applying a threshold of 0.05 to the raw pValues of Mann-Whitney test, a high number of false positives has been detected. In this step we are going to apply multiple test correction, such as **Bonferroni correction** and **Benjamini-Hochberg correction**, and to compare the results with the ones from the raw test. Both multiple test corrections have been performed using **p.adjust** function.
 
 ```
 #create a vector storing the raw pValues
@@ -489,7 +489,7 @@ heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x)
 #### Average linkage
 ![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link_ord.png)
 
-Dendrograms generated using complete linkage method are charatcterized by compact and well-defined clusters both for the probes and for the samples, while using single linkage method dendrograms exhibit the expected chaining effect. However, all heatmaps show a clear division between WT samples (blue) and DS samples (red), as well as a distiction between iper-methylated (high expression level) and ipo-methylated (low expression level) CpG island probes. 
+Dendrograms generated using complete linkage method are characterized by compact and well-defined clusters both for the probes and for the samples, while using single linkage method dendrograms exhibit the expected chaining effect. However, all heatmaps show a clear division between WT samples (blue) and DS samples (red), as well as a distinction  between iper-methylated (high expression level) and ipo-methylated (low expression level) CpG island probes. 
 
 ### Step 12: Produce a volcano plot and a Manhattan plot of the results of differential methylation analysis.
 A **volcano plot** is a type of scatterplot that displays the statistical significance against the fold change; it can be coupled with Gene Ontology enrichment. The fold change is calculated as the difference between the average beta values of WT samples and the average beta values of DS samples, in the following way.
@@ -514,8 +514,8 @@ plot(toVolcPlot[,1], toVolcPlot[,2],pch=16,cex=0.5,xlab="delta",ylab="-log10(pVa
 
 Since in this case the pValues have been generated using a non-parametric test, the typical "volcano" shape of the plot is less detectable than in a volcano plot generated using pValues from parametric tests. 
 
-Together with the volcano plot, a **Manhattan plot** can be generated using the **gap** package. A Manhattan plot is a type of scatter plot useful for the visualization of large number of data, that are plotted according to the genomic coordinates (X-axis) and the negative log10 of the pValues (Y-axis). For the same reason of volcano plot, the typical profile of skyscrapers charterizing the Manhattan plots is lost. 
-After downloading the required package, the dataframe of CpG probes with associted pValues has to be annotated by extracting genomic information from the Illumina450Manifest (cleaned version). The **merge** function is used to perform this step. However, since CpG probes are stored in the rownames and not in the columns (as required by merge() funtion), a new dataframe storing the CpG probe IDs on the column is generated.
+Together with the volcano plot, a **Manhattan plot** can be generated using the **gap** package. A Manhattan plot is a type of scatter plot useful for the visualization of large number of data, that are plotted according to the genomic coordinates (X-axis) and the negative log10 of the pValues (Y-axis). For the same reason of volcano plot, the typical profile of skyscrapers characterizing the Manhattan plots is lost. 
+After downloading the required package, the dataframe of CpG probes with associated pValues has to be annotated by extracting genomic information from the Illumina450Manifest (cleaned version). The **merge** function is used to perform this step. However, since CpG probes are stored in the rownames and not in the columns (as required by merge() function), a new dataframe storing the CpG probe IDs on the column is generated.
 
 ```
 final_wilcox_corrected_col <- data.frame(rownames(final_wilcox_corrected), final_wilcox_corrected)
@@ -546,7 +546,7 @@ axis(2,cex=0.5)
 
 ![manhattan plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/manhattan_plot.png)
 
-As we can see, Mann-Withney test is not able to detect differentially methylated probes, expecially in this case.
+As we can see, Mann-Withney test is not able to detect differentially methylated probes, especially in this case.
 
 ### Optional: As DS is caused by the trisomy of chromosome 21, try also to plot the density of the methylation values of the probes mapping on chromosome 21. Do you see a very clear difference between the samples? How many differentially methylated probes do you find on chromosome 21?
 
@@ -583,7 +583,7 @@ lines(d_mean_of_M_dsset_21,col="purple")
 
 No great differences in the distribution of beta and M values between the two groups can be appreciated.
 
-In order to find how many differentially methylated probes are in chromosome 21, from the vector storing all pValues lower than the significance threshold, the ones associated with CpG probes in chromosme 21 are extracted. 
+In order to find how many differentially methylated probes are in chromosome 21, from the vector storing all pValues lower than the significance threshold, the ones associated with CpG probes in chromosome 21 are extracted. 
 
 ```
 all_chromosomes<-data.frame(Illumina450Manifest_clean$IlmnID,Illumina450Manifest_clean$CHR)
