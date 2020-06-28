@@ -507,10 +507,10 @@ A data frame is created storing in one column, the delta values, and on the othe
 
 ```
 toVolcPlot <- data.frame(delta, -log10(final_wilcox_corrected$pValues_wilcox))
-plot(toVolcPlot[,1], toVolcPlot[,2],pch=16,cex=0.5)
+plot(toVolcPlot[,1], toVolcPlot[,2],pch=16,cex=0.5,xlab="delta",ylab="-log10(pValue)"))
 ```
 
-![volcano plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/volcano_plot.png)
+![volcano plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/volcanoplot.png)
 
 Since in this case the pValues have been generated using a non-parametric test, the typical "volcano" shape of the plot is less detectable than in a volcano plot generated using pValues from parametric tests. 
 
