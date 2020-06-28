@@ -9,11 +9,11 @@ getwd()
 setwd()
 ```
 
-Then let's load **minfi** package, previously installed from Bioconductor. Minfi is a flexible and comprehensive tool for the analysis of Infifium DNA methylation microarrays. Minfi loading is performed using the suppressMessages function to avoid displaying messages. 
+Then let's load **minfi** package, previously installed from Bioconductor. Minfi is a flexible and comprehensive tool for the analysis of Infifium DNA methylation microarrays. Minfi loading is performed using the **suppressMessages** function to avoid displaying messages. 
 
 `suppressMessages(library(minfi))`
 
-Let's now import the raw data from the folder /Input_Data. In pariticulary, we are intereted to the SampleSheet csv file: we can load this file using **read.metharray.sheet** function and then assign it to a object of class RGChannelSet using **read.metharray.exp** function.
+Let's now import the raw data from the folder /Input_Data. In particulary, we can load this file using **read.metharray.sheet** function and then assign it to a object of class RGChannelSet using **read.metharray.exp** function.
 
 ```
 SampleSheet <- read.table("Input_Data/Samplesheet_report_2020.csv",sep=",",header=T)
@@ -93,7 +93,7 @@ Green[rownames(Green)=="39802405",]
 39802405               7582              10793              10337
 ```
 
-Since the address is associated with a type II probe, no color is specified in the table above. It is possible to check if the address is associated with a type I or type II probes by loading the cleaned Illumina450Manifest in R workspace:
+Since the address is associated with a type II probe, no color is specified in the table above. It is possible to check if the address is associated with a type I or type II probe by loading the cleaned Illumina450Manifest in R workspace:
 
 `load("/Users/giorg/Desktop/DNA_RNA DYNAMICS/MODULE_2/Lesson 2-20200514/Illumina450Manifest_clean.RData")`
 
@@ -147,7 +147,7 @@ Illumina450Manifest_clean[Illumina450Manifest_clean$AddressB_ID=="39802405",]
 
 ```
 
-In paritcular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG). The results are summarized in the table below as requested.
+In particular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG). The results are summarized in the table below as requested.
 
 Sample | Red flourescence | Green flourescence | Type | Color
 ------------ | ------------- | ------------ | ------------- | -------------
@@ -186,7 +186,7 @@ Preprocessing
   Manifest version: 0.4.0
 ```
 
-It is possible to sae MSet.raw object as RData file:
+It is possible to save MSet.raw object as RData file:
 
 `save(MSet.raw,file="MSet_raw.RData")`
 
@@ -218,7 +218,7 @@ Then it is possible to plot the results with **plotQC** function.
 
 As it can be seen, all eight samples have a good quality, since they exhibit high median methylated and unmethylated signals.  
 ### Step 5.2: Check the intensity of negative controls using minfi.
-**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evalute the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the signal intenisties of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
+**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evalute the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the signal intensities of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
 
 `controlStripPlot(RGset, controls="NEGATIVE")`
 
@@ -226,11 +226,11 @@ As it can be seen, all eight samples have a good quality, since they exhibit hig
 
 As it can be seen from the plot, all negative controls for both red and green flourescence are good, since their values are below l000 (log2(1000) = 10). 
 ### Step 5.3: Calculate detection pValues and count how many probes have a dection pValue higher than 0.05.
-Let's calculate the detection pValue with **detectionP** function that identifies failed positions, such as those methylated and unmethylated channels reporting background singals. 
+Let's calculate the detection pValue with **detectionP** function that identifies failed positions, such as those methylated and unmethylated channels reporting background signals. 
 
 `detP <- detectionP(RGset)`
 
-In order to evaluate how many probes have a pValue higher than the selected threshold (i.e. 0.05), detectionP results are filtered up.
+In order to evaluate how many probes have a pValue higher than the selected threshold (i.e. 0.05), detectionP results are filtered out.
 
 ```
 failed <- detP>0.05
@@ -245,7 +245,7 @@ summary(failed)
  TRUE :46          TRUE :115    
  ```
 
-In the summary, the boolean "TRUE" refers to the number of probes whose pValue is higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according each samples.
+In the summary, the boolean "TRUE" refers to the number of probes whose pValue is higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according to each sample.
 
 Sample | Failed positions |
 ------------ | ------------- |
@@ -321,7 +321,7 @@ The denisty distributions of beta and M values are almost overlapping in the two
 ![overlapping plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta%20values%20and%20m%20values%20green%20and%20orange.png)
 
 ### Step 7: Normalize the data using the function preprocessSWAN to each student and compare raw data and normalized data.
-Normalization procedure aims to resolving the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using **preprocessSWAN** function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry type of the probes as well. 
+Normalization procedure aims to resolve the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using **preprocessSWAN** function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry type of the probes as well. 
 Raw data:
 
 ```
@@ -368,7 +368,7 @@ d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 Blue lines refer to Infinium I probes while red lines refer to Infinium II probes. 
 It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standard deviation, as expected. The higher peak in the standard deviation of type II beta values is due to less accuracy and reproducibility of Infinium II probes. Furthermore, the distribution of beta values in normalized data is almost similar in all samples, while it is more variable for raw beta values. 
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
-Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
+Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the greatest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
 
 ```
 pca_results <- prcomp(t(beta_preprocessSWAN), scale=T)
@@ -425,7 +425,7 @@ My_mannwhitney_function <- function(x) {
 pValues_wilcox <- apply(beta_preprocessSWAN,1, My_mannwhitney_function)
 ```
 
-We can calculate how many probes are differntialy methylated filtering the resulting pValues according to a threshold of 0.05. Then, it is possible to sort the pValues in ascending order.
+We can calculate how many probes are differntially methylated filtering the resulting pValues according to a threshold of 0.05. Then, it is possible to sort the pValues in ascending order.
 
 ```
 final_wilcox<-data.frame(beta_preprocessSWAN,pValues_wilcox)
