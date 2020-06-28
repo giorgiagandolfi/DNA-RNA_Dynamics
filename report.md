@@ -59,7 +59,7 @@ Annotation
 ```
 
 ### Step 2: Create the dataframes Red and Green to store the red and green fluorescences respectively.
-Let's create the two dataframes for storing red and green fluorescences using **getGreen** and **getRed** functions, provided by Minfi. 
+Let's create the two dataframes storing red and green fluorescences using **getGreen** and **getRed** functions, provided by Minfi. 
 
 Generation of Red dataframe:
 
@@ -79,27 +79,28 @@ dim(Green)
 In order to find red and green fluorescences for the specfic address the following command is performed in Red and Green dataframes respectively:
 ```
 Red[rownames(Red)=="39802405",]
+
+         X5775278051_R01C01 X5775278051_R04C02 X5775278078_R02C01 X5775278078_R05C01 X5775278078_R05C02
+39802405               6382               7313               4936               5786               5747
+         X5930514034_R01C02 X5930514035_R04C02 X5930514035_R06C02
+39802405               6152               5715               6268
+
 Green[rownames(Green)=="39802405",]
+
+         X5775278051_R01C01 X5775278051_R04C02 X5775278078_R02C01 X5775278078_R05C01 X5775278078_R05C02
+39802405               7885               9600               6844               7405               7203
+         X5930514034_R01C02 X5930514035_R04C02 X5930514035_R06C02
+39802405               7582              10793              10337
 ```
 
-Sample | Red flourescence | Green flourescence | Type
------------- | ------------- | ------------ | -------------
-X5775278051_R01C01 | 6382 | 7885 | II
-X5775278051_R04C02 | 7313 | 9600 | II
-X5775278078_R02C01 | 4963 | 6844 | II
-X5775278078_R05C01 | 5786 | 7405 | II
-X5775278078_R05C02 | 5747 | 7203 | II
-X5930514034_R01C02 | 6152 | 7582 | II
-X5930514035_R04C02 | 5715 | 10793 | II
-X5930514035_R06C02 | 6268 | 10337 | II
-
-Since the address is associated with a type II probe, no color is specified in the table above. It is possible to check if the address is associated with a type I or type II probes in the following way: Let's first load the cleaned Illumina450Manifest in R workspace:
+Since the address is associated with a type II probe, no color is specified in the table above. It is possible to check if the address is associated with a type I or type II probes by loading the cleaned Illumina450Manifest in R workspace:
 
 `load("/Users/giorg/Desktop/DNA_RNA DYNAMICS/MODULE_2/Lesson 2-20200514/Illumina450Manifest_clean.RData")`
 
 Then the assigned address is searched in the Illumina450Manifest both for AddressA_ID and AddressB_ID:
 ```
 Illumina450Manifest_clean[Illumina450Manifest_clean$AddressA_ID=="39802405",]
+
        IlmnID       Name AddressA_ID
 32 cg01086462 cg01086462    39802405
                                      AlleleA_ProbeSeq AddressB_ID
@@ -124,6 +125,7 @@ Illumina450Manifest_clean[Illumina450Manifest_clean$AddressA_ID=="39802405",]
 32                                                   NA
 
 Illumina450Manifest_clean[Illumina450Manifest_clean$AddressB_ID=="39802405",]
+
  [1] IlmnID                      Name                       
  [3] AddressA_ID                 AlleleA_ProbeSeq           
  [5] AddressB_ID                 AlleleB_ProbeSeq           
@@ -145,10 +147,22 @@ Illumina450Manifest_clean[Illumina450Manifest_clean$AddressB_ID=="39802405",]
 
 ```
 
-In paritcular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG).
+In paritcular, no AddressB_ID is found with the selected address; otherwise, AddressA_ID with code 39802405 is associted to the probe  cg01086462, a type II probe localized on the forward strand on chromosome Y. Since it is a Type II probe, no color channel is associated to it (the emission flourescence depends on the methylation status of the target CpG). The results are summarized in the table below as requested.
+
+Sample | Red flourescence | Green flourescence | Type | Color
+------------ | ------------- | ------------ | ------------- | -------------
+X5775278051_R01C01 | 6382 | 7885 | II | /
+X5775278051_R04C02 | 7313 | 9600 | II | /
+X5775278078_R02C01 | 4963 | 6844 | II | /
+X5775278078_R05C01 | 5786 | 7405 | II | /
+X5775278078_R05C02 | 5747 | 7203 | II | /
+X5930514034_R01C02 | 6152 | 7582 | II | /
+X5930514035_R04C02 | 5715 | 10793 | II | /
+X5930514035_R06C02 | 6268 | 10337 | II | /
+
 
 ### Step 4: Create the object MSet.raw 
-**MSet.raw** function allows to extract methylated and unmethylated signals from the raw data in RGChannelSet.
+**preprocessRaw** function allows to extract methylated and unmethylated signals from the raw data in RGChannelSet and to generate **MSet.raw** object. 
 ```
 MSet.raw <- preprocessRaw(RGset)
 MSet.raw
@@ -178,7 +192,7 @@ It is possible to sae MSet.raw object as RData file:
 
 ### Step 5.1: Perform the quality check with QCplot.
 The quality control is first perfomed with **getQC** function, that estimates sample-specific quality checks for methylation data. 
-The result of getQC function is a dataframe with two columns referring to the chipwide medians of the mthylated and unmethilated channels.
+The result of getQC function is a dataframe with two columns referring to the chipwide medians of the methylated and unmethylated channels.
 
 ```
 qc <- getQC(MSet.raw)
@@ -196,15 +210,15 @@ DataFrame with 8 rows and 2 columns
 5930514035_R06C02   11.9436   11.9035
 ```
 
-Then it is possible to plot the results.
+Then it is possible to plot the results with **plotQC** function.
 
 `plotQC(qc)`
 
 ![QCplot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/qcplot.png)
 
-As it can be seen, all eight samples have a good quality, since they are plotted on the right side of the line.  
+As it can be seen, all eight samples have a good quality, since they exhibit high median methylated and unmethylated signals.  
 ### Step 5.2: Check the intensity of negative controls using minfi.
-**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evalute the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the singal intenisties of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
+**Negative controls** are sample-dependent controls that, by hybridizing with the sample DNA, allow to evalute the performance across samples. Generally, the signal intensities of negative controls vary between 100 and 1000 units and higher values lead to poor DNA template quality. Let's evaluate the signal intenisties of negative controls in the dataset taking advantage of **controlStripPlot** function (must specify the type of controls probes).
 
 `controlStripPlot(RGset, controls="NEGATIVE")`
 
@@ -231,7 +245,7 @@ summary(failed)
  TRUE :46          TRUE :115    
  ```
 
-In the summary, the boolean "TRUE" refers to the number of probes which have pValue higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according each samples.
+In the summary, the boolean "TRUE" refers to the number of probes whose pValue is higher than the threshold, while the boolean "FALSE" refers to those probes whose pValue is lower than or equal to 0.05. The table below summurizes the results according each samples.
 
 Sample | Failed positions |
 ------------ | ------------- |
@@ -262,7 +276,14 @@ dsset<-MSet.raw[,colnames(MSet.raw) %in% ds]
 
 Now raw M and beta values are extracted for both groups using **getM** and **getBeta** functions, respectively. 
 
-Then, the means of each M and beta values of probes are calculated and plotted according to their density distributions.
+```
+beta_wtset <- getBeta(wtset)
+beta_dsset <- getBeta(dsset)
+M_wtset <- getM(wtset)
+M_dsset <- getM(dsset)
+```
+
+Then, means of beta and M values for each probe in the two sample groups are calculated and plotted according to their density distributions. The first step is performed with **apply** function, by specifying the exclusion of missing data with **na.rm = T** option. The density distributions are calculated with **density** function.
 
 ```
 mean_of_beta_wtset <- apply(beta_wtset,1,mean,na.rm=T)
@@ -277,7 +298,7 @@ mean_of_M_dsset <- apply(M_dsset,1,mean,na.rm=T)
 d_mean_of_M_wtset <- density(mean_of_M_wtset)
 d_mean_of_M_dsset <- density(mean_of_M_dsset)
 ```
-Beta values and M values can be plotted both separately and in overlapping graphs.
+Beta values and M values can be plotted both separately and in overlapping plots, to better estimate possible differences.
 
 ```
 #single plots
@@ -294,13 +315,13 @@ plot(d_mean_of_M_wtset,main="Density of M Values",col="purple")
 lines(d_mean_of_M_dsset, col="green")
 ```
 
-The denisty distributions of beta and M values are almost overlapping in the two groups, as we can see from the plots below. 
+The denisty distributions of beta and M values are almost overlapping in the two groups (orange lines refer to WT while green lines to DS). As it can be seen, the range of beta values is between 0 and 1 (bimodal distirbution) while the range of M values is between minus infinite and plus infinite, so any real number.
 
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_m_ds_vs_wt.png)
 ![overlapping plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_and_M_overlapping.png)
 
 ### Step 7: Normalize the data using the function preprocessSWAN to each student and compare raw data and normalized data.
-Normalization procedure aims to resolving the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using **preprocessSWAN** function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry types probe as well. 
+Normalization procedure aims to resolving the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using **preprocessSWAN** function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry type of the probes as well. 
 Raw data:
 
 ```
@@ -344,7 +365,8 @@ d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 ```
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/preprocessSWAN_plots.png)
 
-It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standrd deviation and a up-shifted median of beta values in the boxplots.
+Blue lines refer to Infinium I probes while red lines refer to Infinium II probes. 
+It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standard deviation, as expected. The higher peak in the standard deviation of type II beta values between replicates is due to less accuracy and reproducibility of Infinium II probes. Furthermore, the distribution of beta values in normalized data is almost similar in all samples, while it is more variable for raw beta values. 
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
 Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
 
@@ -403,13 +425,13 @@ My_mannwhitney_function <- function(x) {
 pValues_wilcox <- apply(beta_preprocessSWAN,1, My_mannwhitney_function)
 ```
 
-We can calculate how many probes are differntialy methylated filtering the resulting pValues according to a threshold of 0.05. 
+We can calculate how many probes are differntialy methylated filtering the resulting pValues according to a threshold of 0.05. Then, it is possible to sort the pValues in ascending order.
 
 ```
 final_wilcox<-data.frame(beta_preprocessSWAN,pValues_wilcox)
 final_wilcox <- final_wilcox[order(final_wilcox$pValues_wilcox),]
-finaL_wilcox_0.05<-final_wilcox[final_wilcox$pValues_wilcox<=0.05,]
-dim(finaL_wilcox_0.05)
+final_wilcox_0.05<-final_wilcox[final_wilcox$pValues_wilcox<=0.05,]
+dim(final_wilcox_0.05)
 [1] 22351     9
 ```
 22351 CpG probes are differentially methylated according to the Mann-Whitney test.
@@ -437,7 +459,7 @@ dim(final_wilcox[final_wilcox$corrected_pValues_BH<=0.05,])
 [1] 0 9
 ```
 
-None false postives are detected when multiple test correction is applied. A boxplot of the raw and corrected pValues shows their distributions.
+No significant probes are detected when multiple test correction is applied. A boxplot of the raw and corrected pValues shows their distributions.
 
 ![boxplot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/boxplot%20pink.png)
 
