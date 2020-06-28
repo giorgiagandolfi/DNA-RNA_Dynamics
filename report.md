@@ -318,7 +318,7 @@ lines(d_mean_of_M_dsset, col="green")
 The denisty distributions of beta and M values are almost overlapping in the two groups (orange lines refer to WT while green lines to DS). As it can be seen, the range of beta values is between 0 and 1 (bimodal distirbution) while the range of M values is between minus infinite and plus infinite, so any real number.
 
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_m_ds_vs_wt.png)
-![overlapping plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta_and_M_overlapping.png)
+![overlapping plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/beta%20values%20and%20m%20values%20green%20and%20orange.png)
 
 ### Step 7: Normalize the data using the function preprocessSWAN to each student and compare raw data and normalized data.
 Normalization procedure aims to resolving the systematic errors and bias introduced by the microarray experimental platform. In this step Subset-quantile Within Array Normalization (SWAN) method is performed using **preprocessSWAN** function. The effects of the normalization procedure are then evaluated comparing densities of mean and standard deviation beta values. Boxplot representation for beta values will be used. The comparison will consider the chemistry type of the probes as well. 
@@ -366,7 +366,7 @@ d_sd_of_beta_preprocessSWAN_II <- density(sd_of_beta_preprocessSWAN_II,na.rm=T)
 ![plots](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/preprocessSWAN_plots.png)
 
 Blue lines refer to Infinium I probes while red lines refer to Infinium II probes. 
-It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standard deviation, as expected. The higher peak in the standard deviation of type II beta values between replicates is due to less accuracy and reproducibility of Infinium II probes. Furthermore, the distribution of beta values in normalized data is almost similar in all samples, while it is more variable for raw beta values. 
+It is possible to observe that normalized beta and M values are not so different from those of raw data, despite an higher peak in the distribution of type II standard deviation, as expected. The higher peak in the standard deviation of type II beta values is due to less accuracy and reproducibility of Infinium II probes. Furthermore, the distribution of beta values in normalized data is almost similar in all samples, while it is more variable for raw beta values. 
 ### Step 8: Perform a PCA on the beta matrix generated in step 7.
 Principal Component Analysis (**PCA**) is an exploratory tool to find predominant gene expression pattern along the identified componetents as well as to detect possible outliers and batch effects. PCA reduces the high-dimensionality space by finding the gratest variances in the data. In R enviroment, PCA is performed using **prcomp()** function, that takes as argument the matrix of normalized beta values. Then a **scree plot** showing the cumulative variance explained by each principal component is generated.
 
@@ -489,7 +489,7 @@ heatmap.2(input_heatmap,col=cm.colors(100),Rowv=T,Colv=T,hclustfun = function(x)
 #### Average linkage
 ![average linkage](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/average_link_ord.png)
 
-Dendrogram generated using complete linkage method is charatcterized by compact and well-defined clusters both for the probes and for the samples. While dendrograms generated with single linkage method show the chaining effect, expecially in the probes' one. However, all heatmaps exhibit a clear division between WT samples (blue) and DS samples (red), as well as a distiction between hypermethylated (high expression level) and ipomethylated (low expression level) CpG islands. 
+Dendrograms generated using complete linkage method are charatcterized by compact and well-defined clusters both for the probes and for the samples, while using single linkage method dendrograms exhibit the expected chaining effect. However, all heatmaps show a clear division between WT samples (blue) and DS samples (red), as well as a distiction between iper-methylated (high expression level) and ipo-methylated (low expression level) CpG island probes. 
 
 ### Step 12: Produce a volcano plot and a Manhattan plot of the results of differential methylation analysis.
 A **volcano plot** is a type of scatterplot that displays the statistical significance against the fold change; it can be coupled with Gene Ontology enrichment. The fold change is calculated as the difference between the average beta values of WT samples and the average beta values of DS samples, in the following way.
@@ -503,7 +503,7 @@ mean_beta_groupWT <- apply(beta_groupWT,1,mean)
 delta <- mean_beta_groupWT - mean_beta_groupDS
 ```
 
-A data frame is created storing in one column, the delta values, and on the other, the -log10 of pValues; these values are then plotted using **plot** function with some options.
+A data frame is created storing in one column, the delta values, and on the other, the -log10 of pValues; these values are then plotted using **plot** function.
 
 ```
 toVolcPlot <- data.frame(delta, -log10(final_wilcox_corrected$pValues_wilcox))
@@ -546,6 +546,8 @@ axis(2,cex=0.5)
 
 ![manhattan plot](https://github.com/giorgiagandolfi/DNA-RNA_Dynamics/blob/master/manhattan_plot.png)
 
+As we can see, Mann-Withney test is not able to detect differentially methylated probes, expecially in this case.
+
 ### Optional: As DS is caused by the trisomy of chromosome 21, try also to plot the density of the methylation values of the probes mapping on chromosome 21. Do you see a very clear difference between the samples? How many differentially methylated probes do you find on chromosome 21?
 
 ```
@@ -587,8 +589,8 @@ In order to find how many differentially methylated probes are in chromosome 21,
 all_chromosomes<-data.frame(Illumina450Manifest_clean$IlmnID,Illumina450Manifest_clean$CHR)
 only_chr21<-all_chromosomes[all_chromosomes$Illumina450Manifest_clean.CHR==21,]
 extract_pVal_chr21<-rownames(final_wilcox)%in%only_chr21$Illumina450Manifest_clean.IlmnID
-finaL_wilcox_0.05_chr21<-final_wilcox[final_wilcox$pValues_wilcox<=0.05 & extract_pVal_chr21,]
-dim(finaL_wilcox_0.05_chr21)
+final_wilcox_0.05_chr21<-final_wilcox[final_wilcox$pValues_wilcox<=0.05 & extract_pVal_chr21,]
+dim(final_wilcox_0.05_chr21)
 [1] 299   9
 ```
 
